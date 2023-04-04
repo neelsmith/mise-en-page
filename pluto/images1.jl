@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -38,11 +38,11 @@ pgurl = "https://www.homermultitext.org/iipsrv?OBJ=IIP,1.0&FIF=/project/homer/py
 img = HTTP.get(pgurl).body |> IOBuffer |> load
 
 
-# ╔═╡ 988797e2-1df1-4081-93d1-eb1fe4d76948
-img |> typeof
-
 # ╔═╡ 7497e4aa-a708-476f-b8b9-5b04bb1b5c71
 md"""### Rescaling images"""
+
+# ╔═╡ 12c394dc-ca7a-4d7c-9a19-8c6d45efe19b
+md"""> Rescale an image to a given height (keeping original image proportions)"""
 
 # ╔═╡ 4faacaf7-a213-486c-bc79-aeed7644ee21
 md"""*Height of image* $(@bind displayheight Slider(100:100:900, show_value = true, default = 200))"""
@@ -81,7 +81,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.4"
 manifest_format = "2.0"
-project_hash = "c03ad4510c1bf387c148eeca9b0fc6263d266abc"
+project_hash = "c5e77667112216ddcdd5384e143fc1717179a6e6"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -1040,9 +1040,9 @@ version = "17.4.0+0"
 # ╟─928175f2-91fc-4fcf-8e7a-2b03ace70497
 # ╟─1d10d4db-d141-4f9c-a41b-7a1dddec10ff
 # ╠═358d60a1-d15a-4f42-be53-045e610cb1be
-# ╠═988797e2-1df1-4081-93d1-eb1fe4d76948
 # ╟─7497e4aa-a708-476f-b8b9-5b04bb1b5c71
-# ╠═4faacaf7-a213-486c-bc79-aeed7644ee21
+# ╟─12c394dc-ca7a-4d7c-9a19-8c6d45efe19b
+# ╟─4faacaf7-a213-486c-bc79-aeed7644ee21
 # ╠═1222a761-1b40-4805-871a-4e426d769c7c
 # ╠═c39eefba-9a31-48c3-a916-c1dfd1f382f2
 # ╟─a6891f78-9fde-44cf-a351-64916eb163db
