@@ -62,6 +62,24 @@ resize(img, displayheight)
 # ╔═╡ a6891f78-9fde-44cf-a351-64916eb163db
 md"""### Highlighting regions of an image"""
 
+# ╔═╡ 51d7f715-d4c3-40d1-9532-df3d8878bbd3
+md"Slicing an image:"
+
+# ╔═╡ 9adc2707-1608-491b-a276-931a0983cff9
+img[100:400, 600:3000]
+
+# ╔═╡ 840d32df-32e9-48c1-b033-92a8a4818866
+hilitable = copy(img)
+
+# ╔═╡ d1f4738e-df9e-4e55-896e-276da457aa27
+red = RGB(1,0,0)
+
+# ╔═╡ 3308644a-f8ef-4c5e-980c-8f612aeddf9c
+hilitable[100:400, 600:3000] .= red
+
+# ╔═╡ 484e94e1-9fa1-4818-81e1-514cea3c62c2
+hilitable
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -79,7 +97,7 @@ PlutoUI = "~0.7.50"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.4"
+julia_version = "1.8.5"
 manifest_format = "2.0"
 project_hash = "c5e77667112216ddcdd5384e143fc1717179a6e6"
 
@@ -1046,5 +1064,11 @@ version = "17.4.0+0"
 # ╠═1222a761-1b40-4805-871a-4e426d769c7c
 # ╠═c39eefba-9a31-48c3-a916-c1dfd1f382f2
 # ╟─a6891f78-9fde-44cf-a351-64916eb163db
+# ╟─51d7f715-d4c3-40d1-9532-df3d8878bbd3
+# ╠═9adc2707-1608-491b-a276-931a0983cff9
+# ╠═840d32df-32e9-48c1-b033-92a8a4818866
+# ╠═d1f4738e-df9e-4e55-896e-276da457aa27
+# ╠═3308644a-f8ef-4c5e-980c-8f612aeddf9c
+# ╠═484e94e1-9fa1-4818-81e1-514cea3c62c2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
