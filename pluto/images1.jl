@@ -177,7 +177,7 @@ faded = fadeit.(sliver)
 
 
 # ╔═╡ 838dd1c6-4841-4124-9fa8-755d6352177c
-md"""*Color factor* $(@bind modfactor Slider(0.1:0.1:0.8, show_value = true))"""
+md"""*Color factor* $(@bind modfactor Slider(0.1:0.05:0.8, show_value = true))"""
 
 # ╔═╡ 33658188-e9af-46aa-bda9-90292a20ffb8
 sliver
@@ -186,8 +186,17 @@ sliver
 begin
 	v = Array{Float64, 2}(undef, imgh, imgw)
 	v .= modfactor
-	modded2 = sliver + RGB.(v)
+	added = sliver + RGB.(v)
+	subtracted = sliver - RGB.(v)
+	[added subtracted]
 end
+
+# ╔═╡ a7c1d55d-24d2-4cb7-8cdc-7d072e461ea8
+md"""
+| Original | Add mask | Subtract mask |
+|:--- |:--- | :--- |
+| $(sliver) | $(added) | $(subtracted) |
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1175,9 +1184,9 @@ version = "17.4.0+0"
 # ╟─a6891f78-9fde-44cf-a351-64916eb163db
 # ╟─f2b8a5d0-c7f6-4c21-ba8c-3a5183c6bf2b
 # ╟─51d7f715-d4c3-40d1-9532-df3d8878bbd3
-# ╠═9adc2707-1608-491b-a276-931a0983cff9
-# ╠═4810d408-dcc9-44ee-9a06-e27396a1a2fc
-# ╠═ccefa0fc-0e4b-428d-94f1-3677f27de385
+# ╟─9adc2707-1608-491b-a276-931a0983cff9
+# ╟─4810d408-dcc9-44ee-9a06-e27396a1a2fc
+# ╟─ccefa0fc-0e4b-428d-94f1-3677f27de385
 # ╠═0778b46c-8115-4220-8564-94245f7539e1
 # ╠═4e67a4f0-7dde-459d-8842-b130d6115096
 # ╠═7ce5a9ba-7786-47a2-ab38-4a239d6ddee7
@@ -1192,7 +1201,8 @@ version = "17.4.0+0"
 # ╠═bcbcc389-1dd6-479c-97b0-351506cc6262
 # ╠═65b5aebd-a4fc-4913-8717-11dc7fae2f81
 # ╟─838dd1c6-4841-4124-9fa8-755d6352177c
+# ╟─a7c1d55d-24d2-4cb7-8cdc-7d072e461ea8
 # ╠═33658188-e9af-46aa-bda9-90292a20ffb8
-# ╠═560b6e73-ed81-4106-a060-5d67d31a94be
+# ╟─560b6e73-ed81-4106-a060-5d67d31a94be
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
