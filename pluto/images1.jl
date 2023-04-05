@@ -53,32 +53,107 @@ function resize(image::Matrix{RGB{N0f8}} , ht::Int)
 	img_width, img_height = size(image)
 	scale_factor = ht / img_height
 	dim = (Int(round(img_width * scale_factor)), Int(round(img_height * scale_factor)))
-	img_resized = imresize(img, dim)
+	img_resized = imresize(image, dim)
 end
 
 # ╔═╡ 1222a761-1b40-4805-871a-4e426d769c7c
-resize(img, displayheight)
+smaller = resize(img, displayheight)
 
 # ╔═╡ a6891f78-9fde-44cf-a351-64916eb163db
 md"""### Highlighting regions of an image"""
 
+# ╔═╡ f2b8a5d0-c7f6-4c21-ba8c-3a5183c6bf2b
+md"""> Remember to work on copies of original image!
+
+"""
+
 # ╔═╡ 51d7f715-d4c3-40d1-9532-df3d8878bbd3
-md"Slicing an image:"
+md"Extracting part of an image:"
 
 # ╔═╡ 9adc2707-1608-491b-a276-931a0983cff9
-img[100:400, 600:3000]
+sliver = img[100:400, 600:3000]
 
-# ╔═╡ 840d32df-32e9-48c1-b033-92a8a4818866
-hilitable = copy(img)
+# ╔═╡ ccefa0fc-0e4b-428d-94f1-3677f27de385
+md"""Controls:
+*Height of image* $(@bind dispheight Slider(100:100:900, show_value = true, default = 200))  *Line width*:  $(@bind linew Slider(10:50, show_value = true, default = 20)) 
+
+
+"""
+
+# ╔═╡ 7ce5a9ba-7786-47a2-ab38-4a239d6ddee7
+
+#function gray_out_rect(img::AbstractArray{T, 3}, rect::Tuple{<:Integer, <:Integer, <:Integer, <:Integer}) where T<:AbstractFloat
+"""ChatGPT wrote this."""
+function gray_out_rect(img, rect::Tuple{<:Integer, <:Integer, <:Integer, <:Integer}) 
+    # Create a copy of the original image
+    #img_copy = deepcopy(img)
+
+	img_copy = deepcopy(img)
+    
+    # Get the dimensions of the image and the rectangle
+    height, width = size(img_copy)
+    x, y, rect_width, rect_height = rect
+    
+    # Clamp the rectangle to be within the image bounds
+    x = clamp(x, 1, width)
+    y = clamp(y, 1, height)
+    rect_width = clamp(rect_width, 0, width - x)
+    rect_height = clamp(rect_height, 0, height - y)
+    
+    # Create a mask with the same dimensions as the image
+    mask = ones(T, size(img_copy))
+    
+    # Set the alpha channel of the mask to zero within the rectangle
+    mask[y:y+rect_height, x:x+rect_width, 4] = 0
+    
+    # Multiply the image by the mask to "gray out" the rectangle
+    img_copy = img_copy .* mask
+    
+    return img_copy
+end
+
+
+# ╔═╡ 86e81497-b4d5-4be8-ac94-569120ae6635
+bounds = (100,300,600,2000)
+
+# ╔═╡ ef9ad5bc-b0d5-4f74-a253-eae140d74225
+gray_out_rect(img,  bounds)
+
+# ╔═╡ 7af487ce-6439-4adc-b5cf-41ad65d8f7e4
+md"""#### Defining colors"""
 
 # ╔═╡ d1f4738e-df9e-4e55-896e-276da457aa27
 red = RGB(1,0,0)
 
-# ╔═╡ 3308644a-f8ef-4c5e-980c-8f612aeddf9c
-hilitable[100:400, 600:3000] .= red
+# ╔═╡ 4810d408-dcc9-44ee-9a06-e27396a1a2fc
+"""Create a new image that draws a rectangle on `image` with corners at `top`,
+`bottom`, `left` and `right`, using a line colored `colr`, with width `linewidth`, 
+and scaled to a resulting height `resultht`.
+"""
+function boxit(image, top, bottom, left, right; colr = red, linewidth = 2, resultht = 200)
+	modified = copy(image)
 
-# ╔═╡ 484e94e1-9fa1-4818-81e1-514cea3c62c2
-hilitable
+	
+	# top:
+	modified[top:top + linewidth, left:right] .= colr
+	# bottom:
+	modified[bottom:bottom +  linewidth, left:right] .= colr
+	# left:
+	modified[top:bottom, left:left + linewidth] .= colr
+	# right:
+	modified[top:bottom + linewidth, right:right + linewidth] .= colr
+	resize(modified, resultht)
+	
+end
+
+# ╔═╡ 0778b46c-8115-4220-8564-94245f7539e1
+boxit(img, 100,400, 600, 3000, resultht = dispheight, linewidth = linew)
+
+# ╔═╡ 4e67a4f0-7dde-459d-8842-b130d6115096
+function boxpct(image, top, ht, left, wdth; colr = red, linewidth = 2, resultht = 200)
+	# Figure scale.  Get pix values for top, ht, left, wdt.
+	
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1060,15 +1135,21 @@ version = "17.4.0+0"
 # ╠═358d60a1-d15a-4f42-be53-045e610cb1be
 # ╟─7497e4aa-a708-476f-b8b9-5b04bb1b5c71
 # ╟─12c394dc-ca7a-4d7c-9a19-8c6d45efe19b
-# ╟─4faacaf7-a213-486c-bc79-aeed7644ee21
+# ╠═4faacaf7-a213-486c-bc79-aeed7644ee21
 # ╠═1222a761-1b40-4805-871a-4e426d769c7c
 # ╠═c39eefba-9a31-48c3-a916-c1dfd1f382f2
 # ╟─a6891f78-9fde-44cf-a351-64916eb163db
+# ╟─f2b8a5d0-c7f6-4c21-ba8c-3a5183c6bf2b
 # ╟─51d7f715-d4c3-40d1-9532-df3d8878bbd3
 # ╠═9adc2707-1608-491b-a276-931a0983cff9
-# ╠═840d32df-32e9-48c1-b033-92a8a4818866
+# ╠═4810d408-dcc9-44ee-9a06-e27396a1a2fc
+# ╠═ccefa0fc-0e4b-428d-94f1-3677f27de385
+# ╠═0778b46c-8115-4220-8564-94245f7539e1
+# ╠═4e67a4f0-7dde-459d-8842-b130d6115096
+# ╠═7ce5a9ba-7786-47a2-ab38-4a239d6ddee7
+# ╠═86e81497-b4d5-4be8-ac94-569120ae6635
+# ╠═ef9ad5bc-b0d5-4f74-a253-eae140d74225
+# ╟─7af487ce-6439-4adc-b5cf-41ad65d8f7e4
 # ╠═d1f4738e-df9e-4e55-896e-276da457aa27
-# ╠═3308644a-f8ef-4c5e-980c-8f612aeddf9c
-# ╠═484e94e1-9fa1-4818-81e1-514cea3c62c2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
