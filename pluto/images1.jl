@@ -155,6 +155,40 @@ function boxpct(image, top, ht, left, wdth; colr = red, linewidth = 2, resultht 
 	
 end
 
+# ╔═╡ 3af3fd68-867c-4553-bafc-9f691c1e1e45
+md"""### Overlays/alpha compositing"""
+
+# ╔═╡ beb833e3-54b8-45d2-8eff-e058be74074d
+function fadeit(im, factor = 0.1)
+	RGB(im.r * factor,0 , 0)
+end
+
+# ╔═╡ 225ba52e-fe79-466c-9fc1-bb1067f8268e
+sliver |> typeof
+
+# ╔═╡ 11855187-d390-4c83-bb8b-d7c2d07504e1
+faded = fadeit.(sliver)
+
+# ╔═╡ bcbcc389-1dd6-479c-97b0-351506cc6262
+(imgh, imgw) = sliver |> size
+
+
+# ╔═╡ 65b5aebd-a4fc-4913-8717-11dc7fae2f81
+
+
+# ╔═╡ 838dd1c6-4841-4124-9fa8-755d6352177c
+md"""*Color factor* $(@bind modfactor Slider(0.1:0.1:0.8, show_value = true))"""
+
+# ╔═╡ 33658188-e9af-46aa-bda9-90292a20ffb8
+sliver
+
+# ╔═╡ 560b6e73-ed81-4106-a060-5d67d31a94be
+begin
+	v = Array{Float64, 2}(undef, imgh, imgw)
+	v .= modfactor
+	modded2 = sliver + RGB.(v)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -172,7 +206,7 @@ PlutoUI = "~0.7.50"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.5"
+julia_version = "1.8.4"
 manifest_format = "2.0"
 project_hash = "c5e77667112216ddcdd5384e143fc1717179a6e6"
 
@@ -1151,5 +1185,14 @@ version = "17.4.0+0"
 # ╠═ef9ad5bc-b0d5-4f74-a253-eae140d74225
 # ╟─7af487ce-6439-4adc-b5cf-41ad65d8f7e4
 # ╠═d1f4738e-df9e-4e55-896e-276da457aa27
+# ╟─3af3fd68-867c-4553-bafc-9f691c1e1e45
+# ╠═beb833e3-54b8-45d2-8eff-e058be74074d
+# ╠═225ba52e-fe79-466c-9fc1-bb1067f8268e
+# ╠═11855187-d390-4c83-bb8b-d7c2d07504e1
+# ╠═bcbcc389-1dd6-479c-97b0-351506cc6262
+# ╠═65b5aebd-a4fc-4913-8717-11dc7fae2f81
+# ╟─838dd1c6-4841-4124-9fa8-755d6352177c
+# ╠═33658188-e9af-46aa-bda9-90292a20ffb8
+# ╠═560b6e73-ed81-4106-a060-5d67d31a94be
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
