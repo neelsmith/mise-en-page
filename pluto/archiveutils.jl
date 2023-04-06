@@ -4,240 +4,118 @@
 using Markdown
 using InteractiveUtils
 
-# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
-macro bind(def, element)
-    quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
-        local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
-        el
-    end
+# ╔═╡ 308cf56c-d495-11ed-34fa-0136d68d3d48
+begin 
+	using HmtArchive, HmtArchive.Analysis
+	using CitableText
+	using CitableObject
+	using CitablePhysicalText
 end
 
-# ╔═╡ 84120f42-6e7d-4a28-95d5-1933c5ae5d21
-begin
-	using Images
-	using HTTP
-	using PlutoUI
-end
+# ╔═╡ 8c9199c6-8473-4173-aed3-8ee879127473
+md"""*Notebook version*: **0.1.0**"""
 
-# ╔═╡ ee000c42-d2ef-11ed-0aa9-31b2344ed101
-md"""## Image sandbox"""
+# ╔═╡ 5c810c79-4aff-485b-86ad-2a1998d0051a
+md"""## Using the HMT archive"""
 
-# ╔═╡ 1f1016e6-4684-4255-bc3b-7e355eb5789e
-md"""### Idioms for loading image data"""
+# ╔═╡ 94e02ba9-4514-4316-bc52-566591662840
+md"""
+This notebook is a quick tutorial on how to work with the published releases of the Homer Multitext project in Julia.
+"""
 
-# ╔═╡ 928175f2-91fc-4fcf-8e7a-2b03ace70497
-md"""> Load an image without saving an intermediate temporary file"""
+# ╔═╡ 55b22a59-8dbc-47f5-a779-c6a6cfd1bb77
+md"""### Loading the current release over the internet"""
 
-# ╔═╡ 1d10d4db-d141-4f9c-a41b-7a1dddec10ff
-pgurl = "https://www.homermultitext.org/iipsrv?OBJ=IIP,1.0&FIF=/project/homer/pyramidal/deepzoom/hmt/vaimg/2017a/VA012RN_0013.tif&RGN=0.05594,0.08200,0.8328,0.8923&wID=5000&CVT=JPEG"
+# ╔═╡ 2249b661-cd38-45dd-8f77-6a96cd002adf
+md">Use all packages you'll need for this tutorial."
 
-# ╔═╡ 358d60a1-d15a-4f42-be53-045e610cb1be
+# ╔═╡ a245ecd3-bbf4-4cfe-b0a4-9be842c8816f
+md">Get a complete text representation (CEX format) of the current release:"
+
+# ╔═╡ 83802e1c-2767-48ff-8f87-2a4fe17a4d08
+src = hmt_cex()
+
+# ╔═╡ 549d5b6a-e3d5-4538-8053-9fa1168eafa0
+releaseinfo = hmt_releaseinfo(src)
+
+# ╔═╡ 5f505c72-274c-4304-8e9f-185211f1435e
+md"### Texts"
+
+# ╔═╡ 9514e12f-3cb2-4a6d-9b70-009ecb401636
+md"""> The HMT archive creates distinct, univocal editions from the multivalent XML documents in the `hmtarchive` repository of the HMT project. For linguistic analysis, the normalized edition is appropropriate, but for comparison to documentary images, diplomatic editions can be helpful."""
+
+# ╔═╡ af394417-7ea8-4c07-a623-42686786bbc2
+textcatalog = hmt_textcatalog(src)
+
+# ╔═╡ d4ca94d2-07ed-4a4c-9254-f521bcad8eb8
+normalizedtexts = hmt_normalized(src)
+
+# ╔═╡ ae271d61-3c71-43af-9d30-9e00425247ed
+diplomatictexts = hmt_diplomatic(src)
+
+# ╔═╡ f43d0436-4b6b-4dc9-8dca-80b982495c35
+md"""### Commentary relations"""
+
+# ╔═╡ 1eeb7653-8ead-4bab-804c-38a2d092e993
+md"""> **NB**: *This is **not yet implemented** in the HMTArchive package: see [issue tracker](https://github.com/homermultitext/HmtArchive.jl/issues/59).*"""
+
+# ╔═╡ 930e399f-e57f-42a3-8d98-51f7a6e0ffdb
+#hmt_commentary(src)
+
+# ╔═╡ 5d860cd1-3155-4941-ab8c-57a66f16548d
+md""" ### DSE records"""
+
+# ╔═╡ 944762f9-52aa-489e-89a2-fb946a617fdb
+md"""> DSE records are organized in collections.  All HMT DSE records are grouped in a single collection, so we can confidently take the first collection from this array."""
+
+# ╔═╡ 36590db3-cd9b-45f6-aae3-261e631644d0
+dse = hmt_dse(src)[1]
+
+# ╔═╡ 4a6b5d48-fce7-41a6-9696-ffbcd519d047
+md"> The `CitablePhysicalText` package has functions for working with a collection of DSE records.  (See [docs](https://cite-architecture.github.io/CitablePhysicalText.jl/stable/retrieval/) for more details.)"
+
+# ╔═╡ 588d5f3a-6a09-4da9-b840-7d8eb5b04edd
+page = Cite2Urn("urn:cite2:hmt:msA.v1:12r")
+
+# ╔═╡ dc1b0285-02c4-4fb1-95e6-b027d72c2d67
+textsforsurface(page, dse)
+
+# ╔═╡ e15ecca4-3b51-405d-afb8-e468766a5b0c
+line1 = CtsUrn("urn:cts:greekLit:tlg0012.tlg001.msA:1.1")
+
+# ╔═╡ 72ffe849-46c9-4805-9ab0-90a267a3ce94
+imagesfortext(line1, dse)
+
+# ╔═╡ 80f4176b-9a95-434c-8fec-047311e2a716
+md"""### Images"""
+
+# ╔═╡ f2a39e3a-e576-4738-9ae0-8bc784c0250c
+md""">The HMT archive groups images in collections. The `hmt_images`functions gets documenation on all images, grouped by collection."""
+
+# ╔═╡ 911252ab-26dd-42e1-b671-e56ee55f06d1
 # ╠═╡ show_logs = false
-img = HTTP.get(pgurl).body |> IOBuffer |> load
+  allimgs = hmt_images(src)
+   
 
+# ╔═╡ 6872531f-0660-4705-8fb5-4a20cc368755
+md""">A couple of collections are placeholders with fewer than 2 images: for practical use, filter them out:"""
 
-# ╔═╡ 7497e4aa-a708-476f-b8b9-5b04bb1b5c71
-md"""### Rescaling images"""
-
-# ╔═╡ 12c394dc-ca7a-4d7c-9a19-8c6d45efe19b
-md"""> Rescale an image to a given height (keeping original image proportions)"""
-
-# ╔═╡ 4faacaf7-a213-486c-bc79-aeed7644ee21
-md"""*Height of image* $(@bind displayheight Slider(100:100:900, show_value = true, default = 200))"""
-
-# ╔═╡ c39eefba-9a31-48c3-a916-c1dfd1f382f2
-"""Scale image `image` to height `ht`, and return a new, resized image."""
-function resize(image::Matrix{RGB{N0f8}} , ht::Int)
-	img_width, img_height = size(image)
-	scale_factor = ht / img_height
-	dim = (Int(round(img_width * scale_factor)), Int(round(img_height * scale_factor)))
-	img_resized = imresize(image, dim)
-end
-
-# ╔═╡ 1222a761-1b40-4805-871a-4e426d769c7c
-smaller = resize(img, displayheight)
-
-# ╔═╡ a6891f78-9fde-44cf-a351-64916eb163db
-md"""### Highlighting regions of an image"""
-
-# ╔═╡ f2b8a5d0-c7f6-4c21-ba8c-3a5183c6bf2b
-md"""> Remember to work on copies of original image!
-
-"""
-
-# ╔═╡ 51d7f715-d4c3-40d1-9532-df3d8878bbd3
-md"Extracting part of an image:"
-
-# ╔═╡ 9adc2707-1608-491b-a276-931a0983cff9
-sliver = img[100:400, 600:3000]
-
-# ╔═╡ 3cfb48d7-85ad-4217-8ee4-1d719047d694
-sliverview = @view img[100:400, 600:3000]
-
-# ╔═╡ ccefa0fc-0e4b-428d-94f1-3677f27de385
-md"""Controls:
-*Height of image* $(@bind dispheight Slider(100:100:900, show_value = true, default = 200))  *Line width*:  $(@bind linew Slider(10:50, show_value = true, default = 20)) 
-
-
-"""
-
-# ╔═╡ 7ce5a9ba-7786-47a2-ab38-4a239d6ddee7
-
-#function gray_out_rect(img::AbstractArray{T, 3}, rect::Tuple{<:Integer, <:Integer, <:Integer, <:Integer}) where T<:AbstractFloat
-"""ChatGPT wrote this."""
-function gray_out_rect(img, rect::Tuple{<:Integer, <:Integer, <:Integer, <:Integer}) 
-    # Create a copy of the original image
-    #img_copy = deepcopy(img)
-
-	img_copy = deepcopy(img)
-    
-    # Get the dimensions of the image and the rectangle
-    height, width = size(img_copy)
-    x, y, rect_width, rect_height = rect
-    
-    # Clamp the rectangle to be within the image bounds
-    x = clamp(x, 1, width)
-    y = clamp(y, 1, height)
-    rect_width = clamp(rect_width, 0, width - x)
-    rect_height = clamp(rect_height, 0, height - y)
-    
-    # Create a mask with the same dimensions as the image
-    mask = ones(T, size(img_copy))
-    
-    # Set the alpha channel of the mask to zero within the rectangle
-    mask[y:y+rect_height, x:x+rect_width, 4] = 0
-    
-    # Multiply the image by the mask to "gray out" the rectangle
-    img_copy = img_copy .* mask
-    
-    return img_copy
-end
-
-
-# ╔═╡ 86e81497-b4d5-4be8-ac94-569120ae6635
-bounds = (100,300,600,2000)
-
-# ╔═╡ ef9ad5bc-b0d5-4f74-a253-eae140d74225
-gray_out_rect(img,  bounds)
-
-# ╔═╡ 7af487ce-6439-4adc-b5cf-41ad65d8f7e4
-md"""#### Defining colors"""
-
-# ╔═╡ d1f4738e-df9e-4e55-896e-276da457aa27
-red = RGB(1,0,0)
-
-# ╔═╡ 4810d408-dcc9-44ee-9a06-e27396a1a2fc
-"""Create a new image that draws a rectangle on `image` with corners at `top`,
-`bottom`, `left` and `right`, using a line colored `colr`, with width `linewidth`, 
-and scaled to a resulting height `resultht`.
-"""
-function boxit(image, top, bottom, left, right; colr = red, linewidth = 2, resultht = 200)
-	modified = copy(image)
-
-	
-	# top:
-	modified[top:top + linewidth, left:right] .= colr
-	# bottom:
-	modified[bottom:bottom +  linewidth, left:right] .= colr
-	# left:
-	modified[top:bottom, left:left + linewidth] .= colr
-	# right:
-	modified[top:bottom + linewidth, right:right + linewidth] .= colr
-	resize(modified, resultht)
-	
-end
-
-# ╔═╡ 0778b46c-8115-4220-8564-94245f7539e1
-boxit(img, 100,400, 600, 3000, resultht = dispheight, linewidth = linew)
-
-# ╔═╡ 4e67a4f0-7dde-459d-8842-b130d6115096
-function boxpct(image, top, ht, left, wdth; colr = red, linewidth = 2, resultht = 200)
-	# Figure scale.  Get pix values for top, ht, left, wdt.
-	
-end
-
-# ╔═╡ 3af3fd68-867c-4553-bafc-9f691c1e1e45
-md"""### Overlays/alpha compositing"""
-
-# ╔═╡ beb833e3-54b8-45d2-8eff-e058be74074d
-function fadeit(im, factor = 0.1)
-	RGB(im.r * factor,0 , 0)
-end
-
-# ╔═╡ 225ba52e-fe79-466c-9fc1-bb1067f8268e
-sliver |> typeof
-
-# ╔═╡ 11855187-d390-4c83-bb8b-d7c2d07504e1
-faded = fadeit.(sliver)
-
-# ╔═╡ bcbcc389-1dd6-479c-97b0-351506cc6262
-#(imgh, imgw) = sliver |> size
-
-
-# ╔═╡ 65b5aebd-a4fc-4913-8717-11dc7fae2f81
-
-
-# ╔═╡ 838dd1c6-4841-4124-9fa8-755d6352177c
-md"""*Color factor* $(@bind modfactor Slider(0.1:0.05:0.8, show_value = true))"""
-
-# ╔═╡ 33658188-e9af-46aa-bda9-90292a20ffb8
-sliver
-
-# ╔═╡ 560b6e73-ed81-4106-a060-5d67d31a94be
-begin
-	
-	(imgh, imgw) = sliver |> size
-	v = Array{Float64, 2}(undef, imgh, imgw)
-	v .= modfactor
-	added = sliver + RGB.(v)
-	subtracted = sliver - RGB.(v)
-	divided = sliver / RGB.(v)
-	[added subtracted divided]
-	
-end
-
-# ╔═╡ a7c1d55d-24d2-4cb7-8cdc-7d072e461ea8
-md"""
-| Original | Add mask | Subtract mask | Divide mask |
-|:--- |:--- | :--- |  :--- |
-| $(sliver) | $(added) | $(subtracted) | |
-"""
-
-# ╔═╡ ea3c2f64-3aea-4b19-bf9c-c36c218b8a72
-md"""Overlay?"""
-
-# ╔═╡ 558d3cb4-453e-46d8-94ea-066d51d7cfd2
-md"""
-| Original | Add mask | Subtract mask |
-|:--- |:--- | :--- |
-| $(img) | $(img) | $(img) |
-"""
-
-# ╔═╡ bd519362-fe2e-45ed-ba92-b46af0731451
-begin
-	v2 = Array{Float64, 2}(undef, imgh, imgw)
-	v2 .= modfactor
-	sliveradded = sliverview + RGB.(v2)
-	#sliversubtracted = sliverview - RGB.(v2)
-	
-end
-
-# ╔═╡ 6b14525b-1e3a-4d97-b131-b0aeb936533b
-md"""> From tutorial page"""
+# ╔═╡ 4569d7b5-f7b0-40b9-9bbb-9f323a133ec2
+ imgs = filter(c -> length(c) > 2, allimgs)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
-PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+CitableObject = "e2b2f5ea-1cd8-4ce8-9b2b-05dad64c2a57"
+CitablePhysicalText = "e38a874e-a7c2-4ff3-8dea-81ae2e5c9b07"
+CitableText = "41e66566-473b-49d4-85b7-da83b66615d8"
+HmtArchive = "1e7b0059-6550-4515-8382-5d3f2046a0a7"
 
 [compat]
-HTTP = "~1.7.4"
-Images = "~0.25.2"
-PlutoUI = "~0.7.50"
+CitableObject = "~0.15.1"
+CitablePhysicalText = "~0.9.5"
+CitableText = "~0.15.2"
+HmtArchive = "~0.10.3"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -246,19 +124,18 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "c5e77667112216ddcdd5384e143fc1717179a6e6"
+project_hash = "fef6515c68a59db8ebf877843c106b87f0ab4b19"
+
+[[deps.ANSIColoredPrinters]]
+git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
+uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
+version = "0.0.1"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
 git-tree-sha1 = "16b6dbc4cf7caee4e1e75c49485ec67b667098a0"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "1.3.1"
-
-[[deps.AbstractPlutoDingetjes]]
-deps = ["Pkg"]
-git-tree-sha1 = "8eaf9f1b4921132a4cff3f36a1d9ba923b14a481"
-uuid = "6e696c72-6542-2067-7265-42206c756150"
-version = "1.1.4"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra", "Requires"]
@@ -304,11 +181,23 @@ git-tree-sha1 = "eb4cb44a499229b3b8426dcfb5dd85333951ff90"
 uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
 version = "0.4.2"
 
+[[deps.CSV]]
+deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "SnoopPrecompile", "Tables", "Unicode", "WeakRefStrings", "WorkerUtilities"]
+git-tree-sha1 = "c700cce799b51c9045473de751e9319bdd1c6e94"
+uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+version = "0.10.9"
+
 [[deps.CatIndices]]
 deps = ["CustomUnitRanges", "OffsetArrays"]
 git-tree-sha1 = "a0f80a09780eed9b1d106a1bf62041c2efc995bc"
 uuid = "aafaddc9-749c-510e-ac4f-586e18779b91"
 version = "0.2.2"
+
+[[deps.CategoricalArrays]]
+deps = ["DataAPI", "Future", "Missings", "Printf", "Requires", "Statistics", "Unicode"]
+git-tree-sha1 = "5084cc1a28976dd1642c9f337b28a3cb03e0f7d2"
+uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
+version = "0.10.7"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
@@ -321,6 +210,72 @@ deps = ["ChainRulesCore", "LinearAlgebra", "Test"]
 git-tree-sha1 = "485193efd2176b88e6622a39a246f8c5b600e74e"
 uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
 version = "0.1.6"
+
+[[deps.CitableAnnotations]]
+deps = ["CitableBase", "CitableObject", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "Test"]
+git-tree-sha1 = "01e8bce6e87dde3beae35d86eb870ca31f7e1dab"
+uuid = "63f90415-d3ea-41a7-8107-8cc186a9b888"
+version = "0.3.4"
+
+[[deps.CitableBase]]
+deps = ["DocStringExtensions", "Documenter", "HTTP", "Test"]
+git-tree-sha1 = "80afb8990f22cb3602aacce4c78f9300f67fdaae"
+uuid = "d6f014bd-995c-41bd-9893-703339864534"
+version = "10.2.4"
+
+[[deps.CitableCollection]]
+deps = ["CSV", "CitableBase", "CitableObject", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "HTTP", "Tables", "Test", "TypedTables"]
+git-tree-sha1 = "7f57b8fbd93ab382291f61d1c58292c4cf815765"
+uuid = "7b95b006-44c5-4794-afff-00ccebff52d7"
+version = "0.4.4"
+
+[[deps.CitableCorpus]]
+deps = ["CitableBase", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "HTTP", "Tables", "Test"]
+git-tree-sha1 = "57d761843bd930006d2563f43455db6eb756186c"
+uuid = "cf5ac11a-93ef-4a1a-97a3-f6af101603b5"
+version = "0.13.3"
+
+[[deps.CitableImage]]
+deps = ["CitableBase", "CitableObject", "CiteEXchange", "DocStringExtensions", "Documenter", "Downloads", "FileIO", "ImageIO", "Images", "Test", "TestImages"]
+git-tree-sha1 = "dd140777d280f167157969560503dbbef41fd49f"
+uuid = "17ccb2e5-db19-44b3-b354-4fd16d92c74e"
+version = "0.6.4"
+
+[[deps.CitableObject]]
+deps = ["CitableBase", "CiteEXchange", "DocStringExtensions", "Documenter", "Downloads", "Test"]
+git-tree-sha1 = "e147d2fa5fd4c036fd7b0ba0d14bf60d26dfefd2"
+uuid = "e2b2f5ea-1cd8-4ce8-9b2b-05dad64c2a57"
+version = "0.15.1"
+
+[[deps.CitableParserBuilder]]
+deps = ["CSV", "CitableBase", "CitableCorpus", "CitableObject", "CitableText", "Compat", "DataStructures", "DocStringExtensions", "Documenter", "HTTP", "Orthography", "Test", "TestSetExtensions", "TypedTables"]
+git-tree-sha1 = "6823d2e92b83bc0c5943e5b1f421c4774d2847e9"
+uuid = "c834cb9d-35b9-419a-8ff8-ecaeea9e2a2a"
+version = "0.23.3"
+
+[[deps.CitablePhysicalText]]
+deps = ["CitableBase", "CitableImage", "CitableObject", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "HTTP", "SplitApplyCombine", "Test"]
+git-tree-sha1 = "e26d3a3599cbe2f91b798c41f8de4af6c2324dc6"
+uuid = "e38a874e-a7c2-4ff3-8dea-81ae2e5c9b07"
+version = "0.9.5"
+
+[[deps.CitableTeiReaders]]
+deps = ["CitableBase", "CitableCorpus", "CitableText", "DocStringExtensions", "Documenter", "EzXML", "HTTP", "Test"]
+git-tree-sha1 = "bb4b0b835722305bb4516f9891acd0edd7d514cd"
+uuid = "b4325aa9-906c-402e-9c3f-19ab8a88308e"
+version = "0.10.1"
+
+[[deps.CitableText]]
+deps = ["CitableBase", "DocStringExtensions", "Documenter", "Test"]
+git-tree-sha1 = "87c096e67162faf21c0983a29396270cca168b4e"
+uuid = "41e66566-473b-49d4-85b7-da83b66615d8"
+version = "0.15.2"
+
+[[deps.CiteEXchange]]
+deps = ["CSV", "CitableBase", "DocStringExtensions", "Documenter", "HTTP", "Test"]
+git-tree-sha1 = "8637a7520d7692d68cdebec69740d84e50da5750"
+uuid = "e2e9ead3-1b6c-4e96-b95f-43e6ab899178"
+version = "0.10.1"
 
 [[deps.Clustering]]
 deps = ["Distances", "LinearAlgebra", "NearestNeighbors", "Printf", "Random", "SparseArrays", "Statistics", "StatsBase"]
@@ -357,6 +312,11 @@ deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
 git-tree-sha1 = "fc08e5930ee9a4e03f84bfb5211cb54e7769758a"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.10"
+
+[[deps.Combinatorics]]
+git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
+uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+version = "1.0.2"
 
 [[deps.Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
@@ -396,9 +356,35 @@ git-tree-sha1 = "d1fff3a548102f48987a52a2e0d114fa97d730f0"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 version = "0.18.13"
 
+[[deps.DataValueInterfaces]]
+git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
+uuid = "e2d170a0-9d28-54be-80f0-106bbe20a464"
+version = "1.0.0"
+
+[[deps.DataValues]]
+deps = ["DataValueInterfaces", "Dates"]
+git-tree-sha1 = "d88a19299eba280a6d062e135a43f00323ae70bf"
+uuid = "e7dc6d0d-1eca-5fa6-8ad6-5aecde8b7ea5"
+version = "0.4.13"
+
 [[deps.Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+
+[[deps.DeepDiffs]]
+git-tree-sha1 = "9824894295b62a6a4ab6adf1c7bf337b3a9ca34c"
+uuid = "ab62b9b5-e342-54a8-a765-a90f495de1a6"
+version = "1.2.0"
+
+[[deps.DelimitedFiles]]
+deps = ["Mmap"]
+uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+
+[[deps.Dictionaries]]
+deps = ["Indexing", "Random", "Serialization"]
+git-tree-sha1 = "e82c3c97b5b4ec111f3c1b55228cebc7510525a2"
+uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
+version = "0.3.25"
 
 [[deps.Distances]]
 deps = ["LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI"]
@@ -416,10 +402,34 @@ git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.9.3"
 
+[[deps.Documenter]]
+deps = ["ANSIColoredPrinters", "Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
+git-tree-sha1 = "58fea7c536acd71f3eef6be3b21c0df5f3df88fd"
+uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+version = "0.27.24"
+
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
+
+[[deps.EditionBuilders]]
+deps = ["CitableBase", "CitableCorpus", "CitableText", "DocStringExtensions", "Documenter", "EzXML", "Test"]
+git-tree-sha1 = "00efdd0ff85cfad741144dadf146bfc849025a80"
+uuid = "2fb66cca-c1f8-4a32-85dd-1a01a9e8cd8f"
+version = "0.8.2"
+
+[[deps.EditorsRepo]]
+deps = ["CSV", "CitableBase", "CitableCorpus", "CitableImage", "CitableObject", "CitablePhysicalText", "CitableTeiReaders", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "EditionBuilders", "Orthography", "PolytonicGreek", "Tables", "Test", "TypedTables"]
+git-tree-sha1 = "86881c61e16717d7f659ca048b632117441db61e"
+uuid = "3fa2051c-bcb6-4d65-8a68-41ff86d56437"
+version = "0.18.3"
+
+[[deps.EzXML]]
+deps = ["Printf", "XML2_jll"]
+git-tree-sha1 = "0fa3b52a04a4e210aeb1626def9c90df3ae65268"
+uuid = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
+version = "1.1.0"
 
 [[deps.FFTViews]]
 deps = ["CustomUnitRanges", "FFTW"]
@@ -445,6 +455,12 @@ git-tree-sha1 = "7be5f99f7d15578798f338f5433b6c432ea8037b"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 version = "1.16.0"
 
+[[deps.FilePathsBase]]
+deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
+git-tree-sha1 = "e27c4ebe80e8699540f2d6c805cc12203b614f12"
+uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
+version = "0.9.20"
+
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
@@ -453,6 +469,16 @@ deps = ["Statistics"]
 git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.4"
+
+[[deps.FreqTables]]
+deps = ["CategoricalArrays", "Missings", "NamedArrays", "Tables"]
+git-tree-sha1 = "488ad2dab30fd2727ee65451f790c81ed454666d"
+uuid = "da1fdf0e-e0ff-5433-a45f-9bb5ff651cb1"
+version = "0.4.5"
+
+[[deps.Future]]
+deps = ["Random"]
+uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[deps.Ghostscript_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -478,17 +504,11 @@ git-tree-sha1 = "37e4657cd56b11abe3d10cd4a1ec5fbdb4180263"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 version = "1.7.4"
 
-[[deps.Hyperscript]]
-deps = ["Test"]
-git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
-uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
-version = "0.0.4"
-
-[[deps.HypertextLiteral]]
-deps = ["Tricks"]
-git-tree-sha1 = "c47c5fa4c5308f27ccaac35504858d8914e102f9"
-uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.4"
+[[deps.HmtArchive]]
+deps = ["CitableAnnotations", "CitableBase", "CitableCollection", "CitableCorpus", "CitableImage", "CitableObject", "CitableParserBuilder", "CitablePhysicalText", "CitableTeiReaders", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "Downloads", "EditionBuilders", "EditorsRepo", "EzXML", "FileIO", "FreqTables", "HTTP", "Pkg", "PolytonicGreek", "Query", "SplitApplyCombine", "StatsBase", "Tables", "Test", "TypedTables", "ZipFile"]
+git-tree-sha1 = "e2cacb1c90873e60a6dc45f9bef86e75f16098bf"
+uuid = "1e7b0059-6550-4515-8382-5d3f2046a0a7"
+version = "0.10.3"
 
 [[deps.IOCapture]]
 deps = ["Logging", "Random"]
@@ -598,6 +618,11 @@ git-tree-sha1 = "3d09a9f60edf77f8a4d99f9e015e8fbf9989605d"
 uuid = "905a6f67-0a94-5f89-b386-d35d92009cd1"
 version = "3.1.7+0"
 
+[[deps.Indexing]]
+git-tree-sha1 = "ce1566720fd6b19ff3411404d4b977acd4814f9f"
+uuid = "313cdc1a-70c2-5d6a-ae34-0150d3930a38"
+version = "1.1.1"
+
 [[deps.IndirectArrays]]
 git-tree-sha1 = "012e604e1c7458645cb8b436f8fba789a51b257f"
 uuid = "9b13fd28-a010-5f03-acff-a1bbcff69959"
@@ -612,6 +637,12 @@ version = "0.1.3"
 git-tree-sha1 = "f550e6e32074c939295eb5ea6de31849ac2c9625"
 uuid = "83e8ac13-25f8-5344-8a64-a9f2b223428f"
 version = "0.5.1"
+
+[[deps.InlineStrings]]
+deps = ["Parsers"]
+git-tree-sha1 = "9cc2baf75c6d09f9da536ddf58eb2f29dedaf461"
+uuid = "842dd82b-1e85-43dc-bf29-5d0ee9dffc48"
+version = "1.4.0"
 
 [[deps.IntegralArrays]]
 deps = ["ColorTypes", "FixedPointNumbers", "IntervalSets"]
@@ -647,6 +678,11 @@ git-tree-sha1 = "49510dfcb407e572524ba94aeae2fced1f3feb0f"
 uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
 version = "0.1.8"
 
+[[deps.InvertedIndices]]
+git-tree-sha1 = "0dc7b50b8d436461be01300fd8cd45aa0274b038"
+uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
+version = "1.3.0"
+
 [[deps.IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
 uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
@@ -656,6 +692,17 @@ version = "0.2.2"
 git-tree-sha1 = "fa6287a4469f5e048d763df38279ee729fbd44e5"
 uuid = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 version = "1.4.0"
+
+[[deps.IterableTables]]
+deps = ["DataValues", "IteratorInterfaceExtensions", "Requires", "TableTraits", "TableTraitsUtils"]
+git-tree-sha1 = "70300b876b2cebde43ebc0df42bc8c94a144e1b4"
+uuid = "1c8ee90f-4401-5389-894e-7a04a3dc0f4d"
+version = "1.0.0"
+
+[[deps.IteratorInterfaceExtensions]]
+git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
+uuid = "82899510-4779-5014-852e-03e436cf321d"
+version = "1.0.0"
 
 [[deps.JLD2]]
 deps = ["FileIO", "MacroTools", "Mmap", "OrderedCollections", "Pkg", "Printf", "Reexport", "Requires", "TranscodingStreams", "UUIDs"]
@@ -724,6 +771,12 @@ version = "1.10.2+0"
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
+[[deps.Libiconv_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "c7cb1f5d892775ba13767a87c7ada0b980ea0a71"
+uuid = "94ce4f54-9a6c-5748-9c1c-f9c7231a4531"
+version = "1.16.1+2"
+
 [[deps.Libtiff_jll]]
 deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "LERC_jll", "Libdl", "Pkg", "Zlib_jll", "Zstd_jll"]
 git-tree-sha1 = "3eb79b0ca5764d4799c06699573fd8f533259713"
@@ -748,11 +801,6 @@ deps = ["Dates", "Logging"]
 git-tree-sha1 = "cedb76b37bc5a6c702ade66be44f831fa23c681e"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
 version = "1.0.0"
-
-[[deps.MIMEs]]
-git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
-uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
-version = "0.1.4"
 
 [[deps.MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
@@ -816,6 +864,12 @@ deps = ["OpenLibm_jll"]
 git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "1.0.2"
+
+[[deps.NamedArrays]]
+deps = ["Combinatorics", "DataStructures", "DelimitedFiles", "InvertedIndices", "LinearAlgebra", "Random", "Requires", "SparseArrays", "Statistics"]
+git-tree-sha1 = "b84e17976a40cb2bfe3ae7edb3673a8c630d4f95"
+uuid = "86f7a689-2022-50b4-a561-43c23ac3c673"
+version = "0.9.8"
 
 [[deps.NearestNeighbors]]
 deps = ["Distances", "StaticArrays"]
@@ -884,6 +938,12 @@ git-tree-sha1 = "d321bf2de576bf25ec4d3e4360faca399afca282"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.6.0"
 
+[[deps.Orthography]]
+deps = ["CitableBase", "CitableCorpus", "CitableText", "Compat", "DocStringExtensions", "Documenter", "OrderedCollections", "StatsBase", "Test", "TestSetExtensions", "TypedTables", "Unicode"]
+git-tree-sha1 = "0aa5a500c45a258d33788403f34e276d92db36f3"
+uuid = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
+version = "0.18.2"
+
 [[deps.PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
 git-tree-sha1 = "f809158b27eba0c18c269cf2a2be6ed751d3e81d"
@@ -892,9 +952,9 @@ version = "0.3.17"
 
 [[deps.PaddedViews]]
 deps = ["OffsetArrays"]
-git-tree-sha1 = "03a7a85b76381a3d04c7a1656039197e70eda03d"
+git-tree-sha1 = "0fac6313486baae819364c52b4f483450a9d793f"
 uuid = "5432bcbf-9aad-5242-b902-cca2824c8663"
-version = "0.5.11"
+version = "0.5.12"
 
 [[deps.Parameters]]
 deps = ["OrderedCollections", "UnPack"]
@@ -919,11 +979,17 @@ git-tree-sha1 = "f6cf8e7944e50901594838951729a1861e668cb8"
 uuid = "eebad327-c553-4316-9ea0-9fa01ccd7688"
 version = "0.3.2"
 
-[[deps.PlutoUI]]
-deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "5bb5129fdd62a2bbbe17c2756932259acf467386"
-uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.50"
+[[deps.PolytonicGreek]]
+deps = ["Compat", "DocStringExtensions", "Documenter", "Orthography", "Test", "TestSetExtensions", "Unicode"]
+git-tree-sha1 = "00f72906132b912e3247ffa6ddb60031693d4305"
+uuid = "72b824a7-2b4a-40fa-944c-ac4f345dc63a"
+version = "0.18.0"
+
+[[deps.PooledArrays]]
+deps = ["DataAPI", "Future"]
+git-tree-sha1 = "a6062fe4063cdafe78f4a0a81cfffb89721b30e7"
+uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
+version = "1.4.2"
 
 [[deps.Preferences]]
 deps = ["TOML"]
@@ -952,6 +1018,18 @@ deps = ["LinearAlgebra", "Random", "RealDot"]
 git-tree-sha1 = "da095158bdc8eaccb7890f9884048555ab771019"
 uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
 version = "0.7.4"
+
+[[deps.Query]]
+deps = ["DataValues", "IterableTables", "MacroTools", "QueryOperators", "Statistics"]
+git-tree-sha1 = "a66aa7ca6f5c29f0e303ccef5c8bd55067df9bbe"
+uuid = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
+version = "1.0.0"
+
+[[deps.QueryOperators]]
+deps = ["DataStructures", "DataValues", "IteratorInterfaceExtensions", "TableShowUtils"]
+git-tree-sha1 = "911c64c204e7ecabfd1872eb93c49b4e7c701f02"
+uuid = "2aef5ad7-51ca-5a8f-8e88-e75cf067b44b"
+version = "0.9.3"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -1004,6 +1082,12 @@ version = "1.4.0"
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
+
+[[deps.SentinelArrays]]
+deps = ["Dates", "Random"]
+git-tree-sha1 = "77d3c4726515dca71f6d80fbb5e251088defe305"
+uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
+version = "1.3.18"
 
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -1060,6 +1144,12 @@ git-tree-sha1 = "ef28127915f4229c971eb43f3fc075dd3fe91880"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "2.2.0"
 
+[[deps.SplitApplyCombine]]
+deps = ["Dictionaries", "Indexing"]
+git-tree-sha1 = "48f393b0231516850e39f6c756970e7ca8b77045"
+uuid = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
+version = "1.2.2"
+
 [[deps.StackViews]]
 deps = ["OffsetArrays"]
 git-tree-sha1 = "46e589465204cd0c08b4bd97385e4fa79a0c770c"
@@ -1093,10 +1183,40 @@ git-tree-sha1 = "d1bf48bfcc554a3761a133fe3a9bb01488e06916"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.33.21"
 
+[[deps.StringDistances]]
+deps = ["Distances", "StatsAPI"]
+git-tree-sha1 = "ceeef74797d961aee825aabf71446d6aba898acb"
+uuid = "88034a9c-02f8-509d-84a9-84ec65e18404"
+version = "0.11.2"
+
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.0"
+
+[[deps.TableShowUtils]]
+deps = ["DataValues", "Dates", "JSON", "Markdown", "Test"]
+git-tree-sha1 = "14c54e1e96431fb87f0d2f5983f090f1b9d06457"
+uuid = "5e66a065-1f0a-5976-b372-e0b8c017ca10"
+version = "0.2.5"
+
+[[deps.TableTraits]]
+deps = ["IteratorInterfaceExtensions"]
+git-tree-sha1 = "c06b2f539df1c6efa794486abfb6ed2022561a39"
+uuid = "3783bdb8-4a98-5b6b-af9a-565f29a5fe9c"
+version = "1.0.1"
+
+[[deps.TableTraitsUtils]]
+deps = ["DataValues", "IteratorInterfaceExtensions", "Missings", "TableTraits"]
+git-tree-sha1 = "78fecfe140d7abb480b53a44f3f85b6aa373c293"
+uuid = "382cd787-c1b6-5bf2-a167-d5b971a19bda"
+version = "1.0.2"
+
+[[deps.Tables]]
+deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits", "Test"]
+git-tree-sha1 = "1544b926975372da01227b382066ab70e574a3ec"
+uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
+version = "1.10.1"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -1112,6 +1232,18 @@ version = "0.1.1"
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[deps.TestImages]]
+deps = ["AxisArrays", "ColorTypes", "FileIO", "ImageIO", "ImageMagick", "OffsetArrays", "Pkg", "StringDistances"]
+git-tree-sha1 = "03492434a1bdde3026288939fc31b5660407b624"
+uuid = "5e47fb64-e119-507b-a336-dd2b206d9990"
+version = "1.7.1"
+
+[[deps.TestSetExtensions]]
+deps = ["DeepDiffs", "Distributed", "Test"]
+git-tree-sha1 = "3a2919a78b04c29a1a57b05e1618e473162b15d0"
+uuid = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
+version = "2.0.0"
 
 [[deps.TiffImages]]
 deps = ["ColorTypes", "DataStructures", "DocStringExtensions", "FileIO", "FixedPointNumbers", "IndirectArrays", "Inflate", "Mmap", "OffsetArrays", "PkgVersion", "ProgressMeter", "UUIDs"]
@@ -1131,10 +1263,11 @@ git-tree-sha1 = "94f38103c984f89cf77c402f2a68dbd870f8165f"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
 version = "0.9.11"
 
-[[deps.Tricks]]
-git-tree-sha1 = "aadb748be58b492045b4f56166b5188aa63ce549"
-uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.7"
+[[deps.TypedTables]]
+deps = ["Adapt", "Dictionaries", "Indexing", "SplitApplyCombine", "Tables", "Unicode"]
+git-tree-sha1 = "d911ae4e642cf7d56b1165d29ef0a96ba3444ca9"
+uuid = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
+version = "1.4.3"
 
 [[deps.URIs]]
 git-tree-sha1 = "074f993b0ca030848b897beff716d93aca60f06a"
@@ -1153,11 +1286,34 @@ version = "1.0.2"
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
+[[deps.WeakRefStrings]]
+deps = ["DataAPI", "InlineStrings", "Parsers"]
+git-tree-sha1 = "b1be2855ed9ed8eac54e5caff2afcdb442d52c23"
+uuid = "ea10d353-3f73-51f8-a26c-33c1cb351aa5"
+version = "1.4.2"
+
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
 git-tree-sha1 = "de67fa59e33ad156a590055375a30b23c40299d3"
 uuid = "efce3f68-66dc-5838-9240-27a6d6f5f9b6"
 version = "0.5.5"
+
+[[deps.WorkerUtilities]]
+git-tree-sha1 = "cd1659ba0d57b71a464a29e64dbc67cfe83d54e7"
+uuid = "76eceee3-57b5-4d4a-8e66-0e911cebbf60"
+version = "1.6.1"
+
+[[deps.XML2_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "Zlib_jll"]
+git-tree-sha1 = "93c41695bc1c08c46c5899f4fe06d6ead504bb73"
+uuid = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
+version = "2.10.3+0"
+
+[[deps.ZipFile]]
+deps = ["Libdl", "Printf", "Zlib_jll"]
+git-tree-sha1 = "3593e69e469d2111389a9bd06bac1f3d730ac6de"
+uuid = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
+version = "0.9.4"
 
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
@@ -1199,44 +1355,35 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═84120f42-6e7d-4a28-95d5-1933c5ae5d21
-# ╟─ee000c42-d2ef-11ed-0aa9-31b2344ed101
-# ╟─1f1016e6-4684-4255-bc3b-7e355eb5789e
-# ╟─928175f2-91fc-4fcf-8e7a-2b03ace70497
-# ╟─1d10d4db-d141-4f9c-a41b-7a1dddec10ff
-# ╠═358d60a1-d15a-4f42-be53-045e610cb1be
-# ╟─7497e4aa-a708-476f-b8b9-5b04bb1b5c71
-# ╟─12c394dc-ca7a-4d7c-9a19-8c6d45efe19b
-# ╠═4faacaf7-a213-486c-bc79-aeed7644ee21
-# ╠═1222a761-1b40-4805-871a-4e426d769c7c
-# ╠═c39eefba-9a31-48c3-a916-c1dfd1f382f2
-# ╟─a6891f78-9fde-44cf-a351-64916eb163db
-# ╟─f2b8a5d0-c7f6-4c21-ba8c-3a5183c6bf2b
-# ╟─51d7f715-d4c3-40d1-9532-df3d8878bbd3
-# ╠═9adc2707-1608-491b-a276-931a0983cff9
-# ╟─3cfb48d7-85ad-4217-8ee4-1d719047d694
-# ╟─4810d408-dcc9-44ee-9a06-e27396a1a2fc
-# ╟─ccefa0fc-0e4b-428d-94f1-3677f27de385
-# ╠═0778b46c-8115-4220-8564-94245f7539e1
-# ╠═4e67a4f0-7dde-459d-8842-b130d6115096
-# ╠═7ce5a9ba-7786-47a2-ab38-4a239d6ddee7
-# ╠═86e81497-b4d5-4be8-ac94-569120ae6635
-# ╠═ef9ad5bc-b0d5-4f74-a253-eae140d74225
-# ╟─7af487ce-6439-4adc-b5cf-41ad65d8f7e4
-# ╠═d1f4738e-df9e-4e55-896e-276da457aa27
-# ╟─3af3fd68-867c-4553-bafc-9f691c1e1e45
-# ╠═beb833e3-54b8-45d2-8eff-e058be74074d
-# ╠═225ba52e-fe79-466c-9fc1-bb1067f8268e
-# ╠═11855187-d390-4c83-bb8b-d7c2d07504e1
-# ╠═bcbcc389-1dd6-479c-97b0-351506cc6262
-# ╠═65b5aebd-a4fc-4913-8717-11dc7fae2f81
-# ╟─838dd1c6-4841-4124-9fa8-755d6352177c
-# ╠═a7c1d55d-24d2-4cb7-8cdc-7d072e461ea8
-# ╠═33658188-e9af-46aa-bda9-90292a20ffb8
-# ╠═560b6e73-ed81-4106-a060-5d67d31a94be
-# ╟─ea3c2f64-3aea-4b19-bf9c-c36c218b8a72
-# ╠═558d3cb4-453e-46d8-94ea-066d51d7cfd2
-# ╠═bd519362-fe2e-45ed-ba92-b46af0731451
-# ╟─6b14525b-1e3a-4d97-b131-b0aeb936533b
+# ╟─8c9199c6-8473-4173-aed3-8ee879127473
+# ╟─5c810c79-4aff-485b-86ad-2a1998d0051a
+# ╟─94e02ba9-4514-4316-bc52-566591662840
+# ╟─55b22a59-8dbc-47f5-a779-c6a6cfd1bb77
+# ╟─2249b661-cd38-45dd-8f77-6a96cd002adf
+# ╠═308cf56c-d495-11ed-34fa-0136d68d3d48
+# ╟─a245ecd3-bbf4-4cfe-b0a4-9be842c8816f
+# ╠═83802e1c-2767-48ff-8f87-2a4fe17a4d08
+# ╠═549d5b6a-e3d5-4538-8053-9fa1168eafa0
+# ╟─5f505c72-274c-4304-8e9f-185211f1435e
+# ╟─9514e12f-3cb2-4a6d-9b70-009ecb401636
+# ╠═af394417-7ea8-4c07-a623-42686786bbc2
+# ╠═d4ca94d2-07ed-4a4c-9254-f521bcad8eb8
+# ╠═ae271d61-3c71-43af-9d30-9e00425247ed
+# ╟─f43d0436-4b6b-4dc9-8dca-80b982495c35
+# ╟─1eeb7653-8ead-4bab-804c-38a2d092e993
+# ╠═930e399f-e57f-42a3-8d98-51f7a6e0ffdb
+# ╟─5d860cd1-3155-4941-ab8c-57a66f16548d
+# ╟─944762f9-52aa-489e-89a2-fb946a617fdb
+# ╠═36590db3-cd9b-45f6-aae3-261e631644d0
+# ╟─4a6b5d48-fce7-41a6-9696-ffbcd519d047
+# ╟─588d5f3a-6a09-4da9-b840-7d8eb5b04edd
+# ╠═dc1b0285-02c4-4fb1-95e6-b027d72c2d67
+# ╟─e15ecca4-3b51-405d-afb8-e468766a5b0c
+# ╠═72ffe849-46c9-4805-9ab0-90a267a3ce94
+# ╟─80f4176b-9a95-434c-8fec-047311e2a716
+# ╟─f2a39e3a-e576-4738-9ae0-8bc784c0250c
+# ╟─911252ab-26dd-42e1-b671-e56ee55f06d1
+# ╟─6872531f-0660-4705-8fb5-4a20cc368755
+# ╠═4569d7b5-f7b0-40b9-9bbb-9f323a133ec2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
