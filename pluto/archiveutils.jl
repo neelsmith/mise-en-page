@@ -4,6 +4,22 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
+# ╔═╡ a4fe75fc-06c0-4788-90a7-ab940fd0400e
+begin
+	using PlutoUI
+	md"""*Version*: **0.1.0** *See version info* $(@bind info CheckBox())"""
+end
+
 # ╔═╡ 308cf56c-d495-11ed-34fa-0136d68d3d48
 begin 
 	using HmtArchive, HmtArchive.Analysis
@@ -12,22 +28,29 @@ begin
 	using CitablePhysicalText
 end
 
-# ╔═╡ 8c9199c6-8473-4173-aed3-8ee879127473
-md"""*Notebook version*: **0.1.0**"""
+# ╔═╡ 8f52360d-1c4a-4fd6-af8c-486dd294f2af
+begin
+	msg = info ? """
+	
+- **0.1.0**:  initial version, illustrating currently implemented loading functions in `HMTArchive` 0.10.3.
+""" : ""
+
+	Markdown.parse(msg)
+end
 
 # ╔═╡ 5c810c79-4aff-485b-86ad-2a1998d0051a
 md"""## Using the HMT archive"""
 
 # ╔═╡ 94e02ba9-4514-4316-bc52-566591662840
 md"""
-This notebook is a quick tutorial on how to work with the published releases of the Homer Multitext project in Julia.
+This notebook is a quick tutorial on how to read data from the published releases of the Homer Multitext project in Julia.
 """
-
-# ╔═╡ 55b22a59-8dbc-47f5-a779-c6a6cfd1bb77
-md"""### Loading the current release over the internet"""
 
 # ╔═╡ 2249b661-cd38-45dd-8f77-6a96cd002adf
 md">Use all packages you'll need for this tutorial."
+
+# ╔═╡ 55b22a59-8dbc-47f5-a779-c6a6cfd1bb77
+md"""### Loading the current release over the internet"""
 
 # ╔═╡ a245ecd3-bbf4-4cfe-b0a4-9be842c8816f
 md">Get a complete text representation (CEX format) of the current release:"
@@ -57,22 +80,32 @@ diplomatictexts = hmt_diplomatic(src)
 md"""### Commentary relations"""
 
 # ╔═╡ 1eeb7653-8ead-4bab-804c-38a2d092e993
-md"""> **NB**: *This is **not yet implemented** in the HMTArchive package: see [issue tracker](https://github.com/homermultitext/HmtArchive.jl/issues/59).*"""
+md"""> **NB**: *This is **not yet implemented** in the HMTArchive package.* It depends on an update to the `CitableAnnotations` that has not yet been integrated into `HmtArchive`.
+"""
 
 # ╔═╡ 930e399f-e57f-42a3-8d98-51f7a6e0ffdb
 #hmt_commentary(src)
+
+# ╔═╡ e7479923-c72a-48e8-84eb-7b0119fb322d
+md"""### Manuscripts"""
+
+# ╔═╡ 57f004f3-ac13-4c1b-93b1-a7577f8f875b
+md"> Manuscripts are modeled  as ordered collections of pages."
+
+# ╔═╡ f2caa91d-d3db-45cf-91e2-3ff57cd72d10
+hmt_codices(src)
 
 # ╔═╡ 5d860cd1-3155-4941-ab8c-57a66f16548d
 md""" ### DSE records"""
 
 # ╔═╡ 944762f9-52aa-489e-89a2-fb946a617fdb
-md"""> DSE records are organized in collections.  All HMT DSE records are grouped in a single collection, so we can confidently take the first collection from this array."""
+md"""> DSE records are organized in collections.  All HMT DSE records are grouped in a single collection, so we can confidently just take the first collection from this array."""
 
 # ╔═╡ 36590db3-cd9b-45f6-aae3-261e631644d0
 dse = hmt_dse(src)[1]
 
 # ╔═╡ 4a6b5d48-fce7-41a6-9696-ffbcd519d047
-md"> The `CitablePhysicalText` package has functions for working with a collection of DSE records.  (See [docs](https://cite-architecture.github.io/CitablePhysicalText.jl/stable/retrieval/) for more details.)"
+md"> The `CitablePhysicalText` package has functions for working with a collection of DSE records.  (See [its docs](https://cite-architecture.github.io/CitablePhysicalText.jl/stable/retrieval/) for more details.)"
 
 # ╔═╡ 588d5f3a-6a09-4da9-b840-7d8eb5b04edd
 page = Cite2Urn("urn:cite2:hmt:msA.v1:12r")
@@ -90,7 +123,7 @@ imagesfortext(line1, dse)
 md"""### Images"""
 
 # ╔═╡ f2a39e3a-e576-4738-9ae0-8bc784c0250c
-md""">The HMT archive groups images in collections. The `hmt_images`functions gets documenation on all images, grouped by collection."""
+md""">The HMT archive groups images in collections. The `hmt_images`functions gets documentation for all images, grouped by collection."""
 
 # ╔═╡ 911252ab-26dd-42e1-b671-e56ee55f06d1
 # ╠═╡ show_logs = false
@@ -98,10 +131,34 @@ md""">The HMT archive groups images in collections. The `hmt_images`functions ge
    
 
 # ╔═╡ 6872531f-0660-4705-8fb5-4a20cc368755
-md""">A couple of collections are placeholders with fewer than 2 images: for practical use, filter them out:"""
+md""">A couple of collections are placeholders with fewer than 2 images: for practical use, filter them out."""
 
 # ╔═╡ 4569d7b5-f7b0-40b9-9bbb-9f323a133ec2
  imgs = filter(c -> length(c) > 2, allimgs)
+
+# ╔═╡ ff745deb-125c-4dd1-ba36-c7b9a47f4aaa
+md"""### Named entities"""
+
+# ╔═╡ b3d417d5-44f7-45ba-b1b1-b0a413a814b0
+md"""> These functions are **not fully tested and implemented**."""
+
+# ╔═╡ 488ed8c9-a46f-4810-9dbc-ba81478aabd0
+# hmt_persnames(src)
+
+# ╔═╡ 22811435-39f4-43bb-b219-81d29867f36f
+# hmt_placenames(src)
+
+# ╔═╡ 5f2bcce4-6a04-48c4-ae77-70ffe6c0e0e5
+md""" ### Indexing"""
+
+# ╔═╡ 929d0133-3bcb-4c48-b4bf-d25054970ad3
+#hmt_commentary(src)
+
+# ╔═╡ 9b5c1612-4c1b-411f-8870-20564768d1e5
+hmt_paragraphs(src)
+
+# ╔═╡ 028bfdff-882c-4a4a-ae3d-5a506d5a3a88
+hmt_pageindex(src)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -110,12 +167,14 @@ CitableObject = "e2b2f5ea-1cd8-4ce8-9b2b-05dad64c2a57"
 CitablePhysicalText = "e38a874e-a7c2-4ff3-8dea-81ae2e5c9b07"
 CitableText = "41e66566-473b-49d4-85b7-da83b66615d8"
 HmtArchive = "1e7b0059-6550-4515-8382-5d3f2046a0a7"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 CitableObject = "~0.15.1"
 CitablePhysicalText = "~0.9.5"
 CitableText = "~0.15.2"
 HmtArchive = "~0.10.3"
+PlutoUI = "~0.7.50"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -124,7 +183,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "fef6515c68a59db8ebf877843c106b87f0ab4b19"
+project_hash = "c405916e84a5a8a222bb8cdaa9bab298f547a99b"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -136,6 +195,12 @@ deps = ["ChainRulesCore", "LinearAlgebra"]
 git-tree-sha1 = "16b6dbc4cf7caee4e1e75c49485ec67b667098a0"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "1.3.1"
+
+[[deps.AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "8eaf9f1b4921132a4cff3f36a1d9ba923b14a481"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.1.4"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra", "Requires"]
@@ -510,6 +575,18 @@ git-tree-sha1 = "e2cacb1c90873e60a6dc45f9bef86e75f16098bf"
 uuid = "1e7b0059-6550-4515-8382-5d3f2046a0a7"
 version = "0.10.3"
 
+[[deps.Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.4"
+
+[[deps.HypertextLiteral]]
+deps = ["Tricks"]
+git-tree-sha1 = "c47c5fa4c5308f27ccaac35504858d8914e102f9"
+uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+version = "0.9.4"
+
 [[deps.IOCapture]]
 deps = ["Logging", "Random"]
 git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
@@ -802,6 +879,11 @@ git-tree-sha1 = "cedb76b37bc5a6c702ade66be44f831fa23c681e"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
 version = "1.0.0"
 
+[[deps.MIMEs]]
+git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
+version = "0.1.4"
+
 [[deps.MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
 git-tree-sha1 = "2ce8695e1e699b68702c03402672a69f54b8aca9"
@@ -978,6 +1060,12 @@ deps = ["Pkg"]
 git-tree-sha1 = "f6cf8e7944e50901594838951729a1861e668cb8"
 uuid = "eebad327-c553-4316-9ea0-9fa01ccd7688"
 version = "0.3.2"
+
+[[deps.PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "5bb5129fdd62a2bbbe17c2756932259acf467386"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.50"
 
 [[deps.PolytonicGreek]]
 deps = ["Compat", "DocStringExtensions", "Documenter", "Orthography", "Test", "TestSetExtensions", "Unicode"]
@@ -1263,6 +1351,11 @@ git-tree-sha1 = "94f38103c984f89cf77c402f2a68dbd870f8165f"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
 version = "0.9.11"
 
+[[deps.Tricks]]
+git-tree-sha1 = "aadb748be58b492045b4f56166b5188aa63ce549"
+uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
+version = "0.1.7"
+
 [[deps.TypedTables]]
 deps = ["Adapt", "Dictionaries", "Indexing", "SplitApplyCombine", "Tables", "Unicode"]
 git-tree-sha1 = "d911ae4e642cf7d56b1165d29ef0a96ba3444ca9"
@@ -1355,12 +1448,13 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─8c9199c6-8473-4173-aed3-8ee879127473
+# ╟─a4fe75fc-06c0-4788-90a7-ab940fd0400e
+# ╟─8f52360d-1c4a-4fd6-af8c-486dd294f2af
 # ╟─5c810c79-4aff-485b-86ad-2a1998d0051a
 # ╟─94e02ba9-4514-4316-bc52-566591662840
-# ╟─55b22a59-8dbc-47f5-a779-c6a6cfd1bb77
 # ╟─2249b661-cd38-45dd-8f77-6a96cd002adf
 # ╠═308cf56c-d495-11ed-34fa-0136d68d3d48
+# ╟─55b22a59-8dbc-47f5-a779-c6a6cfd1bb77
 # ╟─a245ecd3-bbf4-4cfe-b0a4-9be842c8816f
 # ╠═83802e1c-2767-48ff-8f87-2a4fe17a4d08
 # ╠═549d5b6a-e3d5-4538-8053-9fa1168eafa0
@@ -1372,6 +1466,9 @@ version = "17.4.0+0"
 # ╟─f43d0436-4b6b-4dc9-8dca-80b982495c35
 # ╟─1eeb7653-8ead-4bab-804c-38a2d092e993
 # ╠═930e399f-e57f-42a3-8d98-51f7a6e0ffdb
+# ╟─e7479923-c72a-48e8-84eb-7b0119fb322d
+# ╟─57f004f3-ac13-4c1b-93b1-a7577f8f875b
+# ╟─f2caa91d-d3db-45cf-91e2-3ff57cd72d10
 # ╟─5d860cd1-3155-4941-ab8c-57a66f16548d
 # ╟─944762f9-52aa-489e-89a2-fb946a617fdb
 # ╠═36590db3-cd9b-45f6-aae3-261e631644d0
@@ -1385,5 +1482,13 @@ version = "17.4.0+0"
 # ╟─911252ab-26dd-42e1-b671-e56ee55f06d1
 # ╟─6872531f-0660-4705-8fb5-4a20cc368755
 # ╠═4569d7b5-f7b0-40b9-9bbb-9f323a133ec2
+# ╟─ff745deb-125c-4dd1-ba36-c7b9a47f4aaa
+# ╟─b3d417d5-44f7-45ba-b1b1-b0a413a814b0
+# ╠═488ed8c9-a46f-4810-9dbc-ba81478aabd0
+# ╠═22811435-39f4-43bb-b219-81d29867f36f
+# ╟─5f2bcce4-6a04-48c4-ae77-70ffe6c0e0e5
+# ╠═929d0133-3bcb-4c48-b4bf-d25054970ad3
+# ╠═9b5c1612-4c1b-411f-8870-20564768d1e5
+# ╠═028bfdff-882c-4a4a-ae3d-5a506d5a3a88
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
