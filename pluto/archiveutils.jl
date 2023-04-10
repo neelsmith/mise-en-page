@@ -21,6 +21,7 @@ begin
 end
 
 # ╔═╡ 308cf56c-d495-11ed-34fa-0136d68d3d48
+# ╠═╡ show_logs = false
 begin 
 	using HmtArchive, HmtArchive.Analysis
 	using CitableText
@@ -32,14 +33,14 @@ end
 begin
 	msg = info ? """
 	
-- **0.1.0**:  initial version, illustrating currently implemented loading functions in `HMTArchive` 0.10.3.
+- **0.1.0**:  initial version, illustrating currently implemented loading functions in `HMTArchive` 0.11.0.
 """ : ""
 
 	Markdown.parse(msg)
 end
 
 # ╔═╡ 5c810c79-4aff-485b-86ad-2a1998d0051a
-md"""## Using the HMT archive"""
+md"""## Reading the HMT archive"""
 
 # ╔═╡ 94e02ba9-4514-4316-bc52-566591662840
 md"""
@@ -84,7 +85,7 @@ md"""> **NB**: *This is **not yet implemented** in the HMTArchive package.* It d
 """
 
 # ╔═╡ 930e399f-e57f-42a3-8d98-51f7a6e0ffdb
-#hmt_commentary(src)
+hmt_commentary(src)
 
 # ╔═╡ e7479923-c72a-48e8-84eb-7b0119fb322d
 md"""### Manuscripts"""
@@ -151,14 +152,17 @@ md"""> These functions are **not fully tested and implemented**."""
 # ╔═╡ 5f2bcce4-6a04-48c4-ae77-70ffe6c0e0e5
 md""" ### Indexing"""
 
-# ╔═╡ 929d0133-3bcb-4c48-b4bf-d25054970ad3
-#hmt_commentary(src)
+# ╔═╡ b210af78-cddc-4989-9f1a-1aa812ba0f16
+md"""> Chunking of Iliad text in individual manuscsripts, represented as a sequence of range URNs."""
 
 # ╔═╡ 9b5c1612-4c1b-411f-8870-20564768d1e5
 hmt_paragraphs(src)
 
+# ╔═╡ f0159062-7bbb-43d8-aebb-06bc1231b044
+md"""> Not yet modelled in current publication of HMT archive."""
+
 # ╔═╡ 028bfdff-882c-4a4a-ae3d-5a506d5a3a88
-hmt_pageindex(src)
+# hmt_pageindex(src)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -173,7 +177,7 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 CitableObject = "~0.15.1"
 CitablePhysicalText = "~0.9.5"
 CitableText = "~0.15.2"
-HmtArchive = "~0.10.3"
+HmtArchive = "~0.11.0"
 PlutoUI = "~0.7.50"
 """
 
@@ -278,9 +282,9 @@ version = "0.1.6"
 
 [[deps.CitableAnnotations]]
 deps = ["CitableBase", "CitableObject", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "Test"]
-git-tree-sha1 = "01e8bce6e87dde3beae35d86eb870ca31f7e1dab"
+git-tree-sha1 = "040e3efe087af484462b403ee6a5e308980cd4a1"
 uuid = "63f90415-d3ea-41a7-8107-8cc186a9b888"
-version = "0.3.4"
+version = "0.4.2"
 
 [[deps.CitableBase]]
 deps = ["DocStringExtensions", "Documenter", "HTTP", "Test"]
@@ -570,10 +574,10 @@ uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 version = "1.7.4"
 
 [[deps.HmtArchive]]
-deps = ["CitableAnnotations", "CitableBase", "CitableCollection", "CitableCorpus", "CitableImage", "CitableObject", "CitableParserBuilder", "CitablePhysicalText", "CitableTeiReaders", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "Downloads", "EditionBuilders", "EditorsRepo", "EzXML", "FileIO", "FreqTables", "HTTP", "Pkg", "PolytonicGreek", "Query", "SplitApplyCombine", "StatsBase", "Tables", "Test", "TypedTables", "ZipFile"]
-git-tree-sha1 = "e2cacb1c90873e60a6dc45f9bef86e75f16098bf"
+deps = ["CitableAnnotations", "CitableBase", "CitableCollection", "CitableCorpus", "CitableImage", "CitableObject", "CitableParserBuilder", "CitablePhysicalText", "CitableTeiReaders", "CitableText", "CiteEXchange", "Compat", "DocStringExtensions", "Documenter", "Downloads", "EditionBuilders", "EditorsRepo", "EzXML", "FileIO", "FreqTables", "HTTP", "Pkg", "PolytonicGreek", "Query", "SplitApplyCombine", "StatsBase", "Tables", "Test", "TestSetExtensions", "TypedTables", "ZipFile"]
+git-tree-sha1 = "ce1bc05c063b18518ea4980ada1abbdfe10de028"
 uuid = "1e7b0059-6550-4515-8382-5d3f2046a0a7"
-version = "0.10.3"
+version = "0.11.0"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -1415,9 +1419,9 @@ version = "1.2.12+3"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "c6edfe154ad7b313c01aceca188c05c835c67360"
+git-tree-sha1 = "49ce682769cd5de6c72dcf1b94ed7790cd08974c"
 uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
-version = "1.5.4+0"
+version = "1.5.5+0"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
@@ -1487,8 +1491,9 @@ version = "17.4.0+0"
 # ╠═488ed8c9-a46f-4810-9dbc-ba81478aabd0
 # ╠═22811435-39f4-43bb-b219-81d29867f36f
 # ╟─5f2bcce4-6a04-48c4-ae77-70ffe6c0e0e5
-# ╠═929d0133-3bcb-4c48-b4bf-d25054970ad3
+# ╟─b210af78-cddc-4989-9f1a-1aa812ba0f16
 # ╠═9b5c1612-4c1b-411f-8870-20564768d1e5
+# ╟─f0159062-7bbb-43d8-aebb-06bc1231b044
 # ╠═028bfdff-882c-4a4a-ae3d-5a506d5a3a88
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
